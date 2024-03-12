@@ -10,20 +10,22 @@ typedef struct Node {
 
 struct LinkedList {
     Node *head;
+    int size;
 };
 
 LinkedList *list_create() {
     LinkedList *list = malloc(sizeof(LinkedList)); // alocar memória para a estrutura
-    list->head = NULL; // tirar "lixo" para nó cabeça não apontar para ninguém
+    list->head = NULL; // setar nó cabeça: tirar possível 'lixo' guardado
+    list->size = 0;
     return list;
 }
 
 void list_destroy(LinkedList *list) {
     Node *cur = list->head; // nó atual acessa/copia nó cabeça
-    
+
     while (cur != NULL) {
         Node *trash = cur; // nó 'lixo' copia nó atual
-        cur = cur->next; // nó atual aponta próx. elemento
+        cur = cur->next; // nó atual (cabeça) aponta próx. elemento
         free(trash); // liberar nó 'lixo'
     }
     free(list); // liberar memória da estrutura
@@ -35,32 +37,17 @@ void list_insertFirst(LinkedList *list, Element element) {
     
     newNode->next = list->head; // nó criado aponta para antigo nó cabeça
     list->head = newNode; // nó criado se torna nó cabeça da lista
+    list->size++;
 }
 
-void list_insertLast(LinkedList *list, Element element) {
-    Node *cur = list->head; // nó atual acessa/copia nó cabeça
-    if (cur == NULL)
-        list_insertFirst(list, element); // lista vazia: insere cabeça na lista
-    else {
-        while (cur->next != NULL)
-            cur = cur->next; // nó atual aponta próx. elemento
-
-        Node *newNode = malloc(sizeof(Node)); // alocar novo nó
-        newNode->element = element; // inserir elemento ao nó criado
-        
-        newNode->next = NULL; // nó criado aponta para NULL
-        cur->next = newNode; // nó atual aponta para nó criado
-    }
-}
-
-void list_insertAfter(LinkedList *list, int position, Element element) {
-    if (list->head == NULL || position < 0)
+void list_insertAfter(LinkedList *list, int pos, Element element) {
+    if (list->head == NULL || pos < 0)
         list_insertFirst(list, element); // lista vazia ou posição < 0: insere cabeça na lista
     else {
         Node *cur = list->head; // nó atual acessa/copia nó cabeça
 
         int i=0;
-        while (cur->next != NULL && i < position) {
+        while (cur->next != NULL && i < pos) {
             cur = cur->next; // nó atual aponta próx. elemento
             i++; // atualizar contador
         }
@@ -70,6 +57,7 @@ void list_insertAfter(LinkedList *list, int position, Element element) {
 
         newNode->next = cur->next; // nó criado aponta para próx. nó atual
         cur->next = newNode; // nó atual aponta para nó criado
+        list->size++;
     }
 }
 
@@ -80,58 +68,69 @@ bool list_removeFirst(LinkedList *list) {
     Node *trash = list->head; // nó 'lixo' copia nó cabeça
     list->head = trash->next; // nó cabeça aponta próx. elemento
     free(trash); // liberar nó 'lixo'
+    list->size--;
 
     return true;
 }
 
-bool list_remove(LinkedList *list, int position) {
-    if (list->head == NULL) // lista vazía
+bool list_removeAt(LinkedList *list, int pos) {
+    if (list->head == NULL || pos >= list->size) // lista vazia ou índice maior que o tamanho
         return false;
-    if (position < 0) // posição inválida
-        return false;
-    if (position == 0) // inserir início
+    if (pos <= 0) // remover no início
         return list_removeFirst(list);
     
     else {
         Node *prev = list->head; // nó anterior acessa nó cabeça
 
         int i=0;
-        while (prev->next != NULL && i < position - 1) {
+        while (i < pos - 1) {
             prev = prev->next; // nó anterior aponta próx. elemento
             i++; // atualizar contador
         }
-        if (prev->next == NULL)
-            return false;
 
-        Node *trash = prev->next; // nó 'lixo' copia próx. nó anterior (elemento atual)
+        Node *trash = prev->next; // nó 'lixo' copia nó seguinte do anterior (elemento atual)
         prev->next = trash->next; // nó anterior aponta elemento seguinte ao atual
         free(trash);
-        return true;
+        list->size--;
     }
+    return true;
 }
 
-Element list_search(LinkedList *list, int position) {
+Element get(LinkedList *list, int pos) {
     Node *cur = list->head; // nó atual acessa/copia nó cabeça
 
     int i=0;
-    while (cur != NULL && i < position) {
+    while (cur != NULL && i < pos) {
         cur = cur->next; // nó atual aponta próx. elemento
         i++; // atualizar contador
     }
 
     if (cur != NULL)
         return cur->element; // elemento achado!
-    else
-        return ELEMENT_NULL; // elemento NÃO achado, retornar nº 'queimado'
+
+    return ELEMENT_NULL; // elemento NÃO achado, retornar nº 'queimado'
+}
+
+int list_size(LinkedList *list) {
+    return list->size;
+}
+
+bool list_isEmpty(LinkedList *list) {
+    return list->head == NULL;
 }
 
 void list_print(LinkedList *list) {
+    if (list->size == 0) {
+        printf("*\n");
+        return;
+    }
+
     Node *cur = list->head; // nó atual acessa/copia nó cabeça
     
     while (cur != NULL) {
         element_print(cur->element);
         if (cur->next != NULL)
-            printf(" -> ");
+            printf("-> ");
         cur = cur->next; // nó atual aponta próx. elemento
     }
     printf("\n");
