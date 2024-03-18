@@ -16,9 +16,6 @@ void list_insertAfter(LinkedList *list, int pos, Element element); // inserir nu
 bool list_removeFirst(LinkedList *list); // remover 1º elemento
 bool list_removeAt(LinkedList *list, int pos); // remover numa posição específica
 
-bool list_removeLast(LinkedList *list); // remover último elemento
-
-
 Element get(LinkedList *list, int pos); // retornar valor duma posição específica (achar ou não)
 int list_size(LinkedList *list); // retornar qtde de nós da lista
 bool list_isEmpty(LinkedList *list); // verificar se lista está vazia
