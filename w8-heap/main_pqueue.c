@@ -5,7 +5,7 @@
 
 void test_priority() {
     PriorityQueue *pq = pq_create(5);
-    int priorities[] = {10, 20, 30, 40, 50}; // ordenação implícita: a partir dos próprios dados da fila
+    int priorities[] = {10, 20, 30, 40, 50}; // prioridade implícita: a partir dos próprios dados (ordem nº, string)
 
     printf("•Inserções (priority_queue):\n");
     for (int i=0; i < 5; i++) {
