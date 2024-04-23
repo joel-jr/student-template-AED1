@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "heap_sort.h"
+#include "heap_sort.h" 
 
 void printArray(Element *arr, int n) {
     for (int i=0; i < n; i++) {   

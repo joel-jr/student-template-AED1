@@ -1,5 +1,5 @@
 #include "heap_sort.h"
-#include "binary_heap.h"
+#include "binary_heap.h" 
 
 void heapSort(Element *array, int n) {
     // Criar heap + inserir elementos array nele:
